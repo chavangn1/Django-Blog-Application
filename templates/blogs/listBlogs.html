@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Author</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for blog in blogs %}
+            <tr>
+                <td><a href="{% url 'detail-blog' blog.id %}">{{blog.tiltle}}</a></td>
+                <td>{{blog.description}}</td>
+                <td>{{blog.author}}</td>
+                <td><a href="{% url 'update-blog' blog.id %}">Edit</a>
+                <a href="{% url 'delete-blog' blog.id %}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+</html>
