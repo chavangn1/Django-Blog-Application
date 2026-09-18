@@ -1,53 +1,57 @@
 {% extends 'base.html' %}
 
-{% block title %}BlogHub-Register{% endblock %}
+{% block title %}Edit Post · BlogHub{% endblock %}
 
 {% block content %}
 
-<div class="flex items-center justify-center">
-    <form action="" method="post" enctype="multipart/form-data"
-        class="p-16 flex flex-col justify-center min-w-lg max-w-5xl bg-white shadow-2xl mx-auto h-fit py-4 pb-8">
+<main class="flex-1 bg-slate-50 py-12 px-4 sm:px-6">
+    <div class="max-w-2xl mx-auto">
 
-        {% csrf_token %}
-        <h3 class="text-3xl text-center font-bold p-4">Please Update Blog Post</h3>
+        <a href="{% url 'list-blogs' %}" class="inline-flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-rose-600 transition mb-6">
+            ← Back to Articles
+        </a>
 
-        {% for field in form %}
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 sm:p-10">
 
-        <label for="{{ field.id_for_label }}" class="text-gray-950 block pb-2 font-bold mt-4">
-            {{ field.label }}
-        </label>
+            <h1 class="text-2xl font-extrabold text-slate-900 mb-1">Edit post</h1>
+            <p class="text-slate-500 mb-8">Update your article's details below.</p>
 
-        {{ field }}
+            <form action="" method="post" enctype="multipart/form-data" class="space-y-5">
+                {% csrf_token %}
 
-        {% if field.errors %}
-        <div class="text-red-500 text-sm mt-1">
-            {% for error in field.errors %}
-            <p>{{ error }}</p>
-            {% endfor %}
+                {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.errors %}
+                    <div class="text-red-500 text-sm mt-1">
+                        {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                {% if form.non_field_errors %}
+                <div class="text-red-500 text-sm">
+                    {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <button type="submit"
+                    class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 rounded-lg transition mt-2">
+                    Save Changes
+                </button>
+            </form>
         </div>
-        {% endif %}
-
-        {% endfor %}
-
-        <!-- Non-field errors -->
-        {% if form.non_field_errors %}
-        <div class="text-red-500 text-sm mt-2">
-            {% for error in form.non_field_errors %}
-            <p>{{ error }}</p>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        {% for message in messages %}
-        <p class="text-red-500 text-lg mt-2 text-center p-2">{{ message }}</p>
-        {% endfor %}
-
-        <button type="submit" class="bg-blue-500 px-2 py-2 rounded-lg block mt-4">Submit</button>
-
-    </form>
-
-</div>
-
-</div>
+    </div>
+</main>
 
 {% endblock content %}
