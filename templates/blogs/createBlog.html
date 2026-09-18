@@ -1,20 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    Hello Please create form
+{% extends 'base.html' %}
 
-    <form action="" method="post" enctype="multipart/form-data">
+{% block title %}BlogHub-Register{% endblock %}
+
+{% block content %}
+
+<div class="flex items-center justify-center">
+    <form action="" method="post" enctype="multipart/form-data"
+        class="p-16 flex flex-col justify-center min-w-lg max-w-5xl bg-white shadow-2xl mx-auto h-fit py-4 pb-8">
+
         {% csrf_token %}
+        <h3 class="text-3xl text-center font-bold p-4">Please fill the Create Blog</h3>
 
-        {{ form.as_p }}
+        {% for field in form %}
 
-        <button type="submit">submit</button>
+        <label for="{{ field.id_for_label }}" class="text-gray-950 block pb-2 font-bold mt-4">
+            {{ field.label }}
+        </label>
+
+        {{ field }}
+
+        {% if field.errors %}
+        <div class="text-red-500 text-sm mt-1">
+            {% for error in field.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% endfor %}
+
+        <!-- Non-field errors -->
+        {% if form.non_field_errors %}
+        <div class="text-red-500 text-sm mt-2">
+            {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% for message in messages %}
+        <p class="text-red-500 text-lg mt-2 text-center p-2">{{ message }}</p>
+        {% endfor %}
+
+        <button type="submit" class="bg-blue-500 px-2 py-2 rounded-lg block mt-4">Submit</button>
 
     </form>
-</body>
-</html>
+
+</div>
+
+</div>
+
+{% endblock content %}

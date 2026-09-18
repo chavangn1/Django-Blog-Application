@@ -10,7 +10,7 @@ class BlogPostsModel(models.Model):
             ('infrasture', 'infrasture'),
             ('finance', 'finance')
         )
-    tiltle = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
     description = models.TextField()
     category = models.CharField(choices=categories, max_length=40)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -19,7 +19,7 @@ class BlogPostsModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.tiltle
+        return self.title
 
 class CommentsModel(models.Model):
     comment = models.CharField(max_length=100)
@@ -27,6 +27,15 @@ class CommentsModel(models.Model):
     post = models.ForeignKey(BlogPostsModel, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'post'],
+                name='one_comment_per_user_per_post'
+            )
+        ]
+
 
     def __str__(self):
         return self.comment

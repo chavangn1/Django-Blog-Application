@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<main
+    class="p-16 w-full max-w-7xl mx-auto bg-linear-to-r from-gray-100 to-pink-100 flex flex-col items-center gap-24 flex-1">
+
+    <h1 class="text-gray-950 text-5xl font-bold">
+        My Blog Articles
+    </h1>
+
+    <!-- Cards container -->
+    <div class="flex flex-wrap justify-center gap-16 items-start w-full">
+
+        {% for blog in blogs %}
+
+        <div class="w-full max-w-sm bg-white rounded-xl shadow-lg p-6 flex flex-col justify-between">
+
+            <div>
+                <p class="text-gray-500">
+                    {{ blog.category|title }}
+                </p>
+
+                <h2 class="text-xl font-bold py-4">
+                    {{ blog.title|upper|truncatewords:10 }}
+                </h2>
+
+                <p class="pb-4">
+                    {{ blog.description|truncatewords:20 }}
+                </p>
+
+                <p>
+                    {{ blog.created_at|date:"F j, Y" }}
+                </p>
+            </div>
+
+            <a href="{% url 'detail-blog' blog.id %}" class="block text-blue-500 border-t border-gray-700 mt-4 pt-2">
+                Read More
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</main>
+
+
+{% endblock content %}

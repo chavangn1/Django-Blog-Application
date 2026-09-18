@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}BlogHub{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+    {% block extra_css %}
+    {% endblock %}
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+     <nav class="flex justify-between items-center p-2 text-white bg-linear-to-r from-gray-700 to-gray-800 border-b border-gray-200">
+
+        <div>
+            <h3 class="font-bold text-2xl">MyBlog</h3>
+            {% if user.is_authenticated %}
+            <span>Welcome {{request.user}} </span>
+            {% endif %}
+        </div>
+
+        <div class="flex justify-between items-center gap-12">
+            
+            <div class="flex items-center gap-8 pr-8">
+                <a href="{% url 'list-blogs' %}" class="text-lg font-bold hover:text-pink-600 transition">Blogs</a>
+                <a href="" class="text-lg font-bold hover:text-pink-600 transition">Articles</a>
+                <a href="" class="text-lg font-bold hover:text-pink-600 transition">About</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="text-lg font-bold hover:text-pink-600 transition">Log Out</a>
+
+                {% elif request.path != '/accounts/login/' %}
+                    <a href="{% url 'login' %}" class="text-lg font-bold hover:text-pink-600 transition">Login</a>
+
+                {% endif %}
+            </div>
+
+            <form action="{% url 'search-blogs' %}" method="get">
+
+                <input type="text" placeholder="Search blogs" name="search_blogs" class="p-2 rounded-lg border border-gray-400">
+                <button type="submit" class="bg-white text-gray-950 px-4 py-2 rounded-lg">Search</button>
+
+            </form>
+
+        </div>
+
+        
+
+    </nav>
+
+    {% block content %}
+
+    {% endblock content %}
+
+</body>
+</html>

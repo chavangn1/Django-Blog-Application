@@ -1,0 +1,88 @@
+<body class="min-h-screen bg-gray-50 text-gray-900">
+
+    <!-- Navbar -->
+    <nav class="border-b border-gray-200 bg-white">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+
+            <!-- Logo -->
+            <a href="#" class="text-2xl font-bold tracking-tight text-gray-900">
+                Blog<span class="text-blue-600">Hub</span>
+            </a>
+
+            <!-- Navigation -->
+            <div class="hidden items-center gap-6 md:flex">
+
+                <a href="#"
+                   class="text-sm font-medium text-gray-600 transition hover:text-blue-600">
+                    Home
+                </a>
+
+                <a href="#"
+                   class="text-sm font-medium text-gray-600 transition hover:text-blue-600">
+                    Blogs
+                </a>
+
+                <a href="#"
+                   class="text-sm font-medium text-gray-600 transition hover:text-blue-600">
+                    About
+                </a>
+
+                <a href="#"
+                   class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700">
+                    Login
+                </a>
+
+            </div>
+
+            <!-- Mobile menu button -->
+            <button
+                type="button"
+                class="rounded-lg p-2 text-gray-600 hover:bg-gray-100 md:hidden"
+            >
+                ☰
+            </button>
+
+        </div>
+    </nav>
+
+
+    <!-- Django Messages -->
+    {% if messages %}
+        <div class="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
+
+            {% for message in messages %}
+
+                <div class="mb-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        </div>
+    {% endif %}
+
+
+    <!-- Main Content -->
+    <main class="mx-auto min-h-[calc(100vh-145px)] max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-200 bg-white">
+
+        <div class="mx-auto max-w-7xl px-4 py-6 text-center sm:px-6 lg:px-8">
+
+            <p class="text-sm text-gray-500">
+                © {% now "Y" %} BlogHub. All rights reserved.
+            </p>
+
+        </div>
+
+    </footer>
+
+    {% block extra_js %}
+    {% endblock %}

@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
 from accounts.forms import UserRegisterForm
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
+from blogs.models import BlogPostsModel
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 
 def registerUserView(request):
@@ -13,9 +16,9 @@ def registerUserView(request):
             user.set_password(form.cleaned_data['password'])
             user.save()
             messages.success(request, 'You have registered successfully')
-            return redirect('register')
+            return redirect('login')
         else:
-            messages.error(request, "Please correct the errors below.")
+            messages.error(request, "Please correct the above errors.")
 
     else:
         form = UserRegisterForm()
@@ -23,7 +26,11 @@ def registerUserView(request):
 
 
 def loginView(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
     if request.method == 'POST':
+
         email = request.POST.get('email')
         password = request.POST.get('password')
 
@@ -31,12 +38,24 @@ def loginView(request):
 
         if user is not None:
             login(request, user)
-            messages.success(request, "You have logged in successfully!")
-            return redirect('dashboard')  # redirect to your dashboard/home page
+            # messages.success(request, "You have logged in successfully!")
+            
+            next_url = request.POST.get('next')
+
+            if next_url:
+                return redirect(next_url)
+            
+            return redirect('dashboard')
         else:
             messages.error(request, "Invalid email or password. Please try again.")
 
     return render(request, 'accounts/login.html')
 
+def logoutView(request):
+    logout(request)
+    return redirect('login')
+
+@login_required
 def dashboardView(request):
-    return HttpResponse(f"You have came to dashboard - {request.user}")
+    blogs = BlogPostsModel.objects.filter(author = request.user)
+    return render(request, 'accounts/dashboard.html', {'blogs': blogs})

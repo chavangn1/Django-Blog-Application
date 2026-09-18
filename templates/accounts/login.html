@@ -1,26 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    {% if messages %}
-        {% for message in messages%}
-            {{ message}}
-        {% endfor %}
-    {% endif %}
+{% extends 'base.html' %}
 
-    <form action="" method="post">
+{% block title %}BlogHub-Login{% endblock %}
+
+{% block content %}
+
+<div class="flex items-center justify-center">
+    <form action="" method="post"
+        class="p-16 py-4 flex flex-col justify-center min-w-lg max-w-5xl bg-white shadow-2xl mx-auto h-fit">
+
+        <h3 class="text-3xl text-center font-bold p-4 mb-2">Please enter your credentails </h3>
         {% csrf_token %}
-        <label for="email">Email</label>
-        <input id ='email' type="text" value="" name="email">
 
-        <label for="password">Password</label>
-        <input id ='password' type="text" value="" name="password">
+        <div>
+            <label for="email" class="text-gray-950 block pb-2 font-bold">Email</label>
+            <input id='email' type="text" value="" name="email"
+                class="text-sm border border-gray-400 w-full p-2 rounded-md">
+        </div>
 
-        <button type="submit">login</button>
+        <div>
+            <label for="password" class="text-gray-950 block pb-2 font-bold mt-4">Password</label>
+            <input id='password' type="password" value="" name="password"
+                class="text-sm border border-gray-400 w-full p-2 rounded-md">
+        </div>
+
+        {% if request.GET.next %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
+        {% endif %}
+
+        {% for message in messages %} 
+            <p class="text-red-500 text-lg mt-2 text-center p-2">{{ message }}</p> 
+        {% endfor %}
+
+        <button type="submit" class="bg-blue-500 px-2 py-1 rounded-lg block mt-8 font-bold">Login</button>
+        <a class="text-center text-red-400 pt-4" href="{% url 'register' %}">Not Registered?</a>
     </form>
-</body>
-</html>
+
+</div>
+
+<!-- <div class="flex flex-col bg-amber-100 justify-center items-center max-w-1/2 mx-auto h-1/2 gap-4"> -->
+
+</div>
+
+{% endblock content %}

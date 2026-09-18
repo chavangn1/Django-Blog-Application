@@ -1,34 +1,314 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    {% if blog %}
-        {{ blog.tiltle }}
-        {{ blog.author }}
-        {{ blog.category }}
-    {% else %}
-    <p>No blog are found</p>
-    {% endif %}
+{% extends 'base.html' %}
 
-    <h2>Add comment</h2>
-    <form action="" method="post">
-        {% csrf_token %}
-        {{form.as_p}}
-        <input type="submit">
-    </form>
+{% block content %}
 
-    <h2>Recent Comments</h2>
-    {% if comments %}
+<main class="min-h-screen bg-linear-to-r from-gray-100 to-pink-100 py-16 px-6">
 
-        {% for comment in comments%}
-            <p>{{comment.comment}} by {{comment.author}}</p>
-        {% endfor%}
-        
-    {% endif %}
+    <article class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
 
-</body>
-</html>
+        <div class="p-8 md:p-12 md:pb-4">
+
+            <!-- Category -->
+
+            <div class="flex justify-between">
+                    <p class="text-blue-500 font-medium text-lg mb-4">
+                        {{ blog.category|title }}
+                    </p>
+
+                    <p class="text-gray-500 font-medium text-lg mb-4">
+                        {{ blog.author }}
+                    </p>
+
+            </div>
+
+            
+
+            <!-- Image -->
+
+            {% if blog.photo %}
+
+                <img
+                    src="{{ blog.photo.url }}"
+                    alt="{{ blog.title }}"
+                    class="w-full h-64 object-cover rounded-xl mb-8 border"
+                >
+
+            {% endif %}
+
+
+            <!-- Title -->
+
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-950 leading-tight mb-2">
+                {{ blog.title|title }}
+            </h1>
+
+
+            <!-- Date -->
+
+            <p class="text-gray-500 text-sm">
+                Published on {{ blog.created_at|date:"F j, Y" }}
+            </p>
+
+        </div>
+
+        <div class="border-t border-gray-200 p-8 md:px-12 md:py-2">
+
+            <p class="text-gray-700 text-lg leading-8 ">
+                {{ blog.description }}
+            </p>
+
+        </div>
+
+        {% if request.user and request.user == blog.author %}
+
+        <div class="flex justify-center items-center gap-2">
+            <a href="{% url 'update-blog' blog.id %}" class="block bg-gray-950 text-white px-8 py-2 rounded-lg">Edit</a>
+
+            <form method="POST" action="{% url 'delete-blog' blog.id %}">
+                {% csrf_token %}
+                <button type="submit"
+                        class="bg-red-500 text-white px-8 py-2 rounded">
+                    Delete
+                </button>
+            </form>
+
+        </div>
+
+        {% endif %}
+
+        <div class="p-2 md:p-12">
+
+            <h2 class="text-2xl font-bold text-gray-900 mb-8">
+                Comments
+            </h2>
+
+            {% if messages %}
+
+                {% for message in messages %}
+
+                    <p>{{ message }}</p>
+
+                {% endfor %}
+
+            {% endif %}
+
+            {% if user.is_authenticated %}
+
+                {% if not comments %}
+
+                    <form method="post"class="mb-10">
+
+                        {% csrf_token %}
+
+                        {{ form.as_p }}
+
+                        <button
+                            type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+                        >
+                            Add Comment
+                        </button>
+
+                    </form>
+
+                {% else %}
+
+                    {% with user_has_comment=False %}
+
+                    {% endwith %}
+
+                    <form method="post" class="mb-10">
+
+                        {% csrf_token %}
+
+                        {{ form.as_p }}
+
+                        <button
+                            type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+                        >
+                            Add Comment
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            {% else %}
+
+                <div class="bg-gray-100 rounded-lg p-5 mb-10">
+
+                    <p class="text-gray-700 mb-3">
+                        You need to login to comment.
+                    </p>
+
+                    <a
+                        href="{% url 'login' %}?next={{ request.path }}"
+                        class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg"
+                    >
+                        Login to Comment
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+            <div class="space-y-3">
+
+                {% for comment in comments %}
+
+                    <div class="border-b border-gray-200 pb-6">
+
+                        <!-- Author + date -->
+
+                        <div class="flex justify-between items-center">
+
+                            <p class="font-semibold text-gray-900">
+                                {{ comment.author.email }}
+                            </p>
+
+                            <p class="text-sm text-gray-500">
+                                {{ comment.created_at|date:"F j, Y" }}
+                            </p>
+
+                        </div>
+
+
+                        <!-- Comment -->
+
+                        <p class="text-gray-700 mt-3">
+                            {{ comment.comment }}
+                        </p>
+
+                        {% if comment.author == request.user %}
+
+                            <div class="flex gap-4 mt-4">
+
+                                <!-- EDIT -->
+
+                                <button
+                                    type="button"
+                                    onclick="showEditForm({{ comment.id }})"
+                                    class="text-blue-600 hover:text-blue-800"
+                                >
+                                    Edit
+                                </button>
+
+
+                                <!-- DELETE -->
+
+                                <form
+                                    method="post"
+                                    action="{% url 'delete-comments' comment.id %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="text-red-600 hover:text-red-800"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+
+                            <form
+                                id="edit-form-{{ comment.id }}"
+                                method="post"
+                                action="{% url 'edit-comments' comment.id %}"
+                                class="hidden mt-4"
+                            >
+
+                                {% csrf_token %}
+
+                                <textarea
+                                    name="comment"
+                                    rows="4"
+                                    class="w-full border border-gray-300 rounded-lg p-3"
+                                >{{ comment.comment }}</textarea>
+
+
+                                <div class="flex gap-3 mt-3">
+
+                                    <button
+                                        type="submit"
+                                        class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg"
+                                    >
+                                        Save
+                                    </button>
+
+
+                                    <button
+                                        type="button"
+                                        onclick="hideEditForm({{ comment.id }})"
+                                        class="bg-gray-300 hover:bg-gray-400 px-5 py-2 rounded-lg"
+                                    >
+                                        Cancel
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                        {% endif %}
+
+                    </div>
+
+                {% empty %}
+
+                    <p class="text-gray-500">
+                        No comments yet. Be the first to comment!
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <div class="border-t border-gray-200 p-8 md:p-12">
+
+            <a
+                href="{% url 'list-blogs' %}"
+                class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition"
+            >
+                ← Back to Articles
+            </a>
+
+        </div>
+
+    </article>
+
+</main>
+
+
+
+<script>
+
+    function showEditForm(commentId) {
+
+        const form = document.getElementById(
+            `edit-form-${commentId}`
+        );
+
+        form.classList.remove('hidden');
+    }
+
+
+    function hideEditForm(commentId) {
+
+        const form = document.getElementById(
+            `edit-form-${commentId}`
+        );
+
+        form.classList.add('hidden');
+    }
+
+</script>
+
+{% endblock content %}
