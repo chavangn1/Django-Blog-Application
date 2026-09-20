@@ -2,6 +2,9 @@
 
 A full-stack blog platform built with Django, featuring custom user authentication with email activation, post creation with image uploads, and a commenting system.
 
+![Uploading image.png…]()
+
+
 
 ## Features
 
