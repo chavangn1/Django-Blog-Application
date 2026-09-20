@@ -7,10 +7,11 @@ from django.views.decorators.http import require_POST
 from .forms import (CreateBlogForm, CreateCommentForm, EditCommentForm)
 from .models import (BlogPostsModel, CommentsModel)
 from django.db.models import Case, When, Value, IntegerField
+from django.core.paginator import Paginator
 
 
 def listBlogView(request):
-    blogs = BlogPostsModel.objects.all()
+    blogs = BlogPostsModel.objects.all().order_by('-created_at')
     return render(request, 'blogs/listBlogs.html', {'blogs': blogs})
 
 

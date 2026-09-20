@@ -1,0 +1,7 @@
+Hi {{ full_name }},
+
+Thanks for signing up to BlogHub. Click the link below to activate your account:
+
+{{ activation_link }}
+
+This link will expire after a while for security reasons. If you didn't create this account, you can ignore this email.

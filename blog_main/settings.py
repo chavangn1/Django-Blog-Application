@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +22,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^pd_n^6)5=3qbs#xw0^nc5iz6w%oyyb*)wes2+i3xh1=k#6o7w'
+
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -130,9 +132,22 @@ STATICFILES_DIRS = [
 
 MAILERS = {
     'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+        'BACKEND': 'django.core.mail.backends.console.EmailBackend' if DEBUG else 'django.core.mail.backends.smtp.EmailBackend',
+        'OPTIONS': {} if DEBUG else {
+            'host': 'smtp.gmail.com',
+            'use_tls': True,
+            'username': config('EMAIL_HOST_USER'),
+            'password': config('EMAIL_HOST_PASSWORD'),
+        },
     },
 }
+
+DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
+
+# Used to build the activation link sent by accounts/signals.py.
+# Set APP_BASE_URL in your .env once you deploy (e.g. your real domain);
+# defaults to the local dev server otherwise.
+APP_BASE_URL = config('APP_BASE_URL', default='http://127.0.0.1:8000')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
